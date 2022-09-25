@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SPACE INVADERS</title>
+</head>
+<body>
+    <style>
+        * { margin:0; padding:0; }
+        html, body {
+            width:100%; height:100%;
+        }
+        canvas {
+            display:block;
+            background-color: whitesmoke;
+        }
+    </style>
+    <canvas id="myCanvas"></canvas>
+    <script src="graphics.js"></script>
+    <script>
+        class Enemy{
+            constructor(x, y, alive){
+                this.x = x;
+                this.y = y;
+                this.alive = alive;
+            }
+        }
+
+        class Group{
+            constructor(columns, rows){
+                this.x = 0;
+                this.y = 0;
+                this.c = columns;
+                this.r = rows;
+                this.enemies = new Array(this.c);
+                for (let i = 0; i < this.c; i++) {
+                    this.enemies[i] = new Array(this.r);
+                }
+                for (let i = 0; i < this.c; i++) {
+                    for (let j = 0; j < this.r; j++) {
+                        this.enemies[i][j] = new Enemy(this.x + (j * 70), this.y + (i * 70), true)
+                    }
+                }
+            }
+        }
+
+        class Bullet{
+            constructor(x, y, size){
+                this.x = x;
+                this.y = y;
+                this.size = size;
+            }
+        }
+
+        let canvas = document.getElementById("myCanvas");
+        let context = canvas.getContext("2d")
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        window.addEventListener('resize', resizeCanvas, false);
+        let x = 200;
+        let y = 400;
+        let width = 50;
+        let height = 50;
+        let speed = 10;
+        let color = "green";
+        let bullets = [];
+
+        let g = new Group(3, 6);
+
+
+        setInterval(function(){
+            draw();
+        }, 1000/60)
+        document.addEventListener("keydown", onKeyDown)
+        window.addEventListener('resize', resizeCanvas, false);
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        function draw(){
+            drawRectangle(context, 0, 0, canvas.width, canvas.height, "whitesmoke");
+            drawRectangle(context, x, y, width, height, color);
+            for (let i = 0; i < g.c; i++) {
+                for (let j = 0; j < g.r; j++) {
+                    drawRectangle(context, g.enemies[i][j].x, g.enemies[i][j].y, width, height, "red");
+                }
+            }
+            for (let i = 0; i < bullets.length; i++) {
+                drawRectangle(context, bullets[i].x, bullets[i].y, bullets[i].size, bullets[i].size, "yellow");
+            }
+
+        }
+
+        function shoot(){
+            bullets.push(new Bullet(x, y, 50));
+        }
+
+        function onKeyDown(event){
+            var keyCode = event.keyCode;
+            switch (keyCode) {
+                case 39:
+                    x += speed;
+                    break;
+                case 37:
+                    x -= speed;
+                    break;
+                case 38:
+                    y -= speed;
+                    break;
+                case 40:
+                    y += speed;
+                    break;
+                case 32:
+                    shoot();
+                    break;
+            }
+        }
+    </script>
+</body>
+</html>
